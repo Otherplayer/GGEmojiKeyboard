@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface GGInputView : UIView
+FOUNDATION_EXPORT NSString *const kHiddenKeyboardNotification;
 
+@interface GGInputView : UIView
+-(void)showInView:(UIView *)superView;
 @end

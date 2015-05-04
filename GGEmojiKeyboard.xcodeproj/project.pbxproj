@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		631ABAC81AF7AADF0038F480 /* GGEmojiPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 631ABAC71AF7AADF0038F480 /* GGEmojiPageView.m */; };
+		631ABACB1AF7AB720038F480 /* GGEmojiKeyboardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 631ABACA1AF7AB720038F480 /* GGEmojiKeyboardView.m */; };
 		63CC0EDD1AF60A2F00BB64D8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 63CC0EDC1AF60A2F00BB64D8 /* main.m */; };
 		63CC0EE01AF60A2F00BB64D8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 63CC0EDF1AF60A2F00BB64D8 /* AppDelegate.m */; };
 		63CC0EE31AF60A2F00BB64D8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63CC0EE21AF60A2F00BB64D8 /* ViewController.m */; };
@@ -14,6 +16,7 @@
 		63CC0EE81AF60A2F00BB64D8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63CC0EE71AF60A2F00BB64D8 /* Images.xcassets */; };
 		63CC0EEB1AF60A2F00BB64D8 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 63CC0EE91AF60A2F00BB64D8 /* LaunchScreen.xib */; };
 		63CC0EF71AF60A2F00BB64D8 /* GGEmojiKeyboardTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 63CC0EF61AF60A2F00BB64D8 /* GGEmojiKeyboardTests.m */; };
+		63CC0F031AF60C0300BB64D8 /* GGInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 63CC0F021AF60C0300BB64D8 /* GGInputView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,6 +30,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		631ABAC61AF7AADF0038F480 /* GGEmojiPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GGEmojiPageView.h; sourceTree = "<group>"; };
+		631ABAC71AF7AADF0038F480 /* GGEmojiPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GGEmojiPageView.m; sourceTree = "<group>"; };
+		631ABAC91AF7AB720038F480 /* GGEmojiKeyboardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GGEmojiKeyboardView.h; sourceTree = "<group>"; };
+		631ABACA1AF7AB720038F480 /* GGEmojiKeyboardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GGEmojiKeyboardView.m; sourceTree = "<group>"; };
 		63CC0ED71AF60A2F00BB64D8 /* GGEmojiKeyboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GGEmojiKeyboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63CC0EDB1AF60A2F00BB64D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		63CC0EDC1AF60A2F00BB64D8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -40,6 +47,8 @@
 		63CC0EF01AF60A2F00BB64D8 /* GGEmojiKeyboardTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GGEmojiKeyboardTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		63CC0EF51AF60A2F00BB64D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		63CC0EF61AF60A2F00BB64D8 /* GGEmojiKeyboardTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GGEmojiKeyboardTests.m; sourceTree = "<group>"; };
+		63CC0F011AF60C0300BB64D8 /* GGInputView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GGInputView.h; sourceTree = "<group>"; };
+		63CC0F021AF60C0300BB64D8 /* GGInputView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GGInputView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +90,7 @@
 		63CC0ED91AF60A2F00BB64D8 /* GGEmojiKeyboard */ = {
 			isa = PBXGroup;
 			children = (
+				63CC0F001AF60A4100BB64D8 /* EmojiView */,
 				63CC0EDE1AF60A2F00BB64D8 /* AppDelegate.h */,
 				63CC0EDF1AF60A2F00BB64D8 /* AppDelegate.m */,
 				63CC0EE11AF60A2F00BB64D8 /* ViewController.h */,
@@ -117,6 +127,19 @@
 				63CC0EF51AF60A2F00BB64D8 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		63CC0F001AF60A4100BB64D8 /* EmojiView */ = {
+			isa = PBXGroup;
+			children = (
+				63CC0F011AF60C0300BB64D8 /* GGInputView.h */,
+				63CC0F021AF60C0300BB64D8 /* GGInputView.m */,
+				631ABAC61AF7AADF0038F480 /* GGEmojiPageView.h */,
+				631ABAC71AF7AADF0038F480 /* GGEmojiPageView.m */,
+				631ABAC91AF7AB720038F480 /* GGEmojiKeyboardView.h */,
+				631ABACA1AF7AB720038F480 /* GGEmojiKeyboardView.m */,
+			);
+			name = EmojiView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -220,6 +243,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				63CC0EE31AF60A2F00BB64D8 /* ViewController.m in Sources */,
+				631ABAC81AF7AADF0038F480 /* GGEmojiPageView.m in Sources */,
+				631ABACB1AF7AB720038F480 /* GGEmojiKeyboardView.m in Sources */,
+				63CC0F031AF60C0300BB64D8 /* GGInputView.m in Sources */,
 				63CC0EE01AF60A2F00BB64D8 /* AppDelegate.m in Sources */,
 				63CC0EDD1AF60A2F00BB64D8 /* main.m in Sources */,
 			);
@@ -418,6 +444,7 @@
 				63CC0EFC1AF60A2F00BB64D8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		63CC0EFD1AF60A2F00BB64D8 /* Build configuration list for PBXNativeTarget "GGEmojiKeyboardTests" */ = {
 			isa = XCConfigurationList;
@@ -426,6 +453,7 @@
 				63CC0EFF1AF60A2F00BB64D8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

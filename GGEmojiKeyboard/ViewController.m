@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "GGInputView.h"
 
 @interface ViewController ()
 
@@ -17,6 +18,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    
+    
+    GGInputView *inputView = [[GGInputView alloc] init];
+    [inputView showInView:self.view];
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+    [self.view endEditing:YES];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kHiddenKeyboardNotification object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
