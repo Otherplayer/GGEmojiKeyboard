@@ -9,13 +9,13 @@
 #import "GGInputView.h"
 #import "GGEmojiKeyboardView.h"
 
-#define ScreenWidth [[UIScreen mainScreen] bounds].size.width
-#define ScreenHeight [[UIScreen mainScreen] bounds].size.height
+#define kScreenWidth [[UIScreen mainScreen] bounds].size.width
+#define kScreenHeight [[UIScreen mainScreen] bounds].size.height
 
-const  CGFloat  ButtonWidth = 64.0f;
-const  CGFloat  Margin = 6.25f;
-const  CGFloat  InputViewHeight = 36.5f;//36.5
-static CGFloat  ViewHeight = InputViewHeight + Margin * 2;
+const  CGFloat  kButtonWidth = 64.0f;
+const  CGFloat  kMargin = 6.25f;
+const  CGFloat  kInputViewHeight = 36.5f;//36.5
+static CGFloat  kViewHeight = kInputViewHeight + kMargin * 2;
 
 
 NSString *const kHiddenKeyboardNotification = @"kHiddenKeyboardNotification";
@@ -24,6 +24,7 @@ NSString *const kHiddenKeyboardNotification = @"kHiddenKeyboardNotification";
 @property (nonatomic, strong) UIButton *leftButton;
 @property (nonatomic, strong) UITextView *textView;
 @property (nonatomic, strong) UIButton *rightButton;
+@property (nonatomic, unsafe_unretained) BOOL systemKeyboardisShowing;
 
 @property (nonatomic, strong) GGEmojiKeyboardView *keyboardView;
 
@@ -40,9 +41,11 @@ NSString *const kHiddenKeyboardNotification = @"kHiddenKeyboardNotification";
         [self setBackgroundColor:[UIColor groupTableViewBackgroundColor]];
         
         // 顶部线条
-        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 0.5, ScreenWidth, 0.5)];
+        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 0.5, kScreenWidth, 0.5)];
         [line setBackgroundColor:[UIColor lightGrayColor]];
         [self addSubview:line];
+        
+        self.systemKeyboardisShowing = NO;
         
     }
     return self;
@@ -57,9 +60,10 @@ NSString *const kHiddenKeyboardNotification = @"kHiddenKeyboardNotification";
 #pragma mark - Public
 -(void)showInView:(UIView *)superView{
     [superView addSubview:self];
+    [superView bringSubviewToFront:self];
     spv = superView;
     [self registerNotification];
-    [self setFrame:CGRectMake(0, superView.bounds.size.height - ViewHeight, ScreenWidth, ViewHeight)];
+    [self setFrame:CGRectMake(0, superView.bounds.size.height - kViewHeight, kScreenWidth, kViewHeight)];
     [self setupInputView];
     [self setupFunctionView];
 }
@@ -70,7 +74,7 @@ NSString *const kHiddenKeyboardNotification = @"kHiddenKeyboardNotification";
     
     UIFont *font = [UIFont systemFontOfSize:17];
     
-    self.textView = [[UITextView alloc] initWithFrame:CGRectMake(ButtonWidth, Margin, ScreenWidth - ButtonWidth * 2, InputViewHeight) textContainer:nil];
+    self.textView = [[UITextView alloc] initWithFrame:CGRectMake(kButtonWidth, kMargin, kScreenWidth - kButtonWidth * 2, kInputViewHeight) textContainer:nil];
     self.textView.font = font;
     self.textView.scrollEnabled = NO;
     self.textView.delegate = self;
@@ -83,7 +87,7 @@ NSString *const kHiddenKeyboardNotification = @"kHiddenKeyboardNotification";
 }
 
 - (void)setupFunctionView{
-    leftButton = [[UIButton alloc] initWithFrame:CGRectMake(5, (ViewHeight - 40) / 2, ButtonWidth - 10, 40)];
+    leftButton = [[UIButton alloc] initWithFrame:CGRectMake(5, (kViewHeight - 40) / 2, kButtonWidth - 10, 40)];
     [self addSubview:leftButton];
     [leftButton setBackgroundColor:[UIColor grayColor]];
     
@@ -96,23 +100,22 @@ NSString *const kHiddenKeyboardNotification = @"kHiddenKeyboardNotification";
 - (void)leftButtonAction:(id)sender{
 
     if (self.keyboardView.isShowing) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.textView becomeFirstResponder];
-        });
-    }else{
-        [self.textView resignFirstResponder];
+        [self.textView becomeFirstResponder];
     }
-    
-    [self altEmojiKeyboardShowState];
+    else{
+        [self altEmojiKeyboardShowState:YES];
+        
+        if (self.systemKeyboardisShowing) {
+            [self.textView resignFirstResponder];
+        }
+    }
 }
 
 #pragma mark -
 #pragma mark - UITextViewDelegate
 
 - (void)textViewDidChange:(UITextView *)textView{
-    
-    
-    [self altInputViewShowState:textView];
+    [self uipdateInputViewUI:textView];
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
@@ -122,37 +125,37 @@ NSString *const kHiddenKeyboardNotification = @"kHiddenKeyboardNotification";
 #pragma mark - Notification
 
 - (void)keyboardWillShowNotification:(NSNotification *)noti{
-    if (_keyboardView && _keyboardView.isShowing) {
-        [self altEmojiKeyboardShowState];
-    }
-    
     NSTimeInterval animationDuration = [noti.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
     CGRect currentRect = [noti.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    CGRect frame = CGRectMake(0, ScreenHeight - ViewHeight - currentRect.size.height, ScreenWidth, ViewHeight);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [UIView animateWithDuration:animationDuration animations:^{
-            [self setFrame:frame];
-        } completion:^(BOOL finished) {
-        }];
-    });
+    if (currentRect.size.height < 216) {
+        return;//切换键盘时会出现本通知执行多次的现象，I don't know why!!
+    }
+    self.systemKeyboardisShowing = YES;
+    
+    CGRect frame = CGRectMake(0, kScreenHeight - kViewHeight - currentRect.size.height, kScreenWidth, kViewHeight);
+    [self updateUI:frame animationDuration:animationDuration];
+
+    if (self.keyboardView.isShowing) {
+        [self.keyboardView show:NO];
+    }
 }
 
 - (void)keyboardWillHideNotification:(NSNotification *)noti{
 
     NSTimeInterval animationDuration = [noti.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [UIView animateWithDuration:animationDuration + 0.01 animations:^{
-            [self setFrame:CGRectMake(0, ScreenHeight - ViewHeight, ScreenWidth, ViewHeight)];
-        }];
-    });
+    CGRect frame = CGRectMake(0, kScreenHeight - kViewHeight, kScreenWidth, kViewHeight);
+    self.systemKeyboardisShowing = NO;
+    if (!self.keyboardView.isShowing) {
+        [self updateUI:frame animationDuration:animationDuration];
+    }
 }
 
 - (void)hideEmojiKeyboardNotification:(NSNotification *)noti{
-    if (self.keyboardView.isShowing) {
-        [self altEmojiKeyboardShowState];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.keyboardView.isShowing) {
+            [self altEmojiKeyboardShowState:NO];
+        }
+    });
 }
 
 - (void)registerNotification{
@@ -162,57 +165,59 @@ NSString *const kHiddenKeyboardNotification = @"kHiddenKeyboardNotification";
 }
 
 
-#pragma mark - Private
-
-- (void)altInputViewShowState:(UITextView *)textView{
-    CGFloat heightofTextView = [self contentofheight:textView.text];
-    CGRect newSelfFrame = self.frame;
-    CGFloat oldHeight = newSelfFrame.size.height;
-    CGFloat newHeight = heightofTextView + Margin * 2;
-    
-    ViewHeight = newHeight;
-    
-    newSelfFrame.size.height = newHeight;
-    newSelfFrame.origin.y = newSelfFrame.origin.y - newHeight + oldHeight;
-    
-    CGRect newInputFrame = self.textView.frame;
-    newInputFrame.origin.y = Margin;
-    newInputFrame.size.height = heightofTextView;
-    
+- (void)updateUI:(CGRect)frame animationDuration:(NSTimeInterval)animationDuration{
     dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [UIView animateWithDuration:0.15 animations:^{
-            [self setFrame:newSelfFrame];
-            [self.textView setFrame:newInputFrame];
-            [leftButton setFrame:CGRectMake(5, (ViewHeight - 40) - 4.5, ButtonWidth - 10, 40)];
-        } completion:^(BOOL finished) {
-        }];
-        
-    });
-}
-
-- (void)altEmojiKeyboardShowState{
-    [self.keyboardView show:!self.keyboardView.isShowing];
-    
-    CGFloat y = self.keyboardView.isShowing ? (ScreenHeight - ViewHeight - 216) : (ScreenHeight - ViewHeight);
-    
-    CGRect frame = CGRectMake(0, y, ScreenWidth, ViewHeight);
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
-        [UIView animateWithDuration:0.25 animations:^{
+        [UIView animateWithDuration:animationDuration animations:^{
             [self setFrame:frame];
         } completion:^(BOOL finished) {
         }];
     });
 }
 
+#pragma mark - Private
+
+- (void)uipdateInputViewUI:(UITextView *)textView{
+    CGFloat heightofTextView = [self contentofheight:textView.text];
+    CGRect newSelfFrame = self.frame;
+    CGFloat oldHeight = newSelfFrame.size.height;
+    CGFloat newHeight = heightofTextView + kMargin * 2;
+    
+    kViewHeight = newHeight;
+    
+    newSelfFrame.size.height = newHeight;
+    newSelfFrame.origin.y = newSelfFrame.origin.y - newHeight + oldHeight;
+    
+    CGRect newInputFrame = self.textView.frame;
+    newInputFrame.origin.y = kMargin;
+    newInputFrame.size.height = heightofTextView;
+    
+    [UIView animateWithDuration:0.15 animations:^{
+        [self setFrame:newSelfFrame];
+        [self.textView setFrame:newInputFrame];
+        [leftButton setFrame:CGRectMake(5, (kViewHeight - 40) - 4.5, kButtonWidth - 10, 40)];
+    } completion:^(BOOL finished) {
+    }];
+}
+
+- (void)altEmojiKeyboardShowState:(BOOL)show{
+    [self.keyboardView show:show];
+    
+    CGFloat y = show ? (kScreenHeight - kViewHeight - kKeyboardHeight) : (kScreenHeight - kViewHeight);
+    
+    CGRect frame = CGRectMake(0, y, kScreenWidth, kViewHeight);
+    [UIView animateWithDuration:0.25 animations:^{
+        [self setFrame:frame];
+    } completion:^(BOOL finished) {
+    }];
+}
+
 - (CGFloat)contentofheight:(NSString *)content{
-    return [self.textView systemLayoutSizeFittingSize:CGSizeMake(ScreenWidth - ButtonWidth * 2, 44) withHorizontalFittingPriority:(ScreenWidth - ButtonWidth * 2) verticalFittingPriority:UILayoutPriorityDefaultLow].height;
+    return [self.textView systemLayoutSizeFittingSize:CGSizeMake(kScreenWidth - kButtonWidth * 2, 44) withHorizontalFittingPriority:(kScreenWidth - kButtonWidth * 2) verticalFittingPriority:UILayoutPriorityDefaultLow].height;
 }
 
 -(GGEmojiKeyboardView *)keyboardView{
     if (![_keyboardView isDescendantOfView:spv]) {
-        _keyboardView = [[GGEmojiKeyboardView alloc] init];
+        _keyboardView = [[GGEmojiKeyboardView alloc] initWithFrame:CGRectMake(0, kScreenHeight, kScreenWidth, 0)];
         [_keyboardView showInView:spv];
     }
     return _keyboardView;

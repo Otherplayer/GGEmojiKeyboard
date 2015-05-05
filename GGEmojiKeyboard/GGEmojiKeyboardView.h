@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+FOUNDATION_EXTERN const CGFloat kKeyboardHeight;
 @interface GGEmojiKeyboardView : UIView
 
 @property (nonatomic, unsafe_unretained)BOOL isShowing;

@@ -19,7 +19,8 @@ const CGFloat kKeyboardHeight = 216.f;
     self = [super initWithFrame:frame];
     if (self) {
         [self setFrame:CGRectMake(0, kScreenHeight, kScreenWidth, kKeyboardHeight)];
-        [self setBackgroundColor:[UIColor groupTableViewBackgroundColor]];
+        [self setBackgroundColor:[UIColor redColor]];
+        [self setIsShowing:NO];
     }
     return self;
 }
